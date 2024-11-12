@@ -87,7 +87,17 @@ function DocumentEditor(props: Props, ref: React.RefObject<any>) {
     const disableContextMenu = (event: any) => {
       event.preventDefault();
     };
-    if (!team?.getPreference(TeamPreference.TeamCanCopyText)) {
+    if (
+      user?.email &&
+      [
+        "indra@insignia.vc",
+        "tien@insignia.vc",
+        "jimmy@insignia.vc",
+        "paulo@insignia.vc",
+      ].includes(user.email)
+    ) {
+      // can edit
+    } else if (!team?.getPreference(TeamPreference.TeamCanCopyText)) {
       window.addEventListener("contextmenu", disableContextMenu, false);
       window.addEventListener("keydown", disableCopy, false);
       setCanSelect(false);
