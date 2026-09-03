@@ -50,6 +50,9 @@ export default function init(
   server.on(
     "upgrade",
     function (req: IncomingMessage, socket: Duplex, head: Buffer) {
+      // Guard: the websockets service logs this; without a listener a peer reset
+      // during upgrade kills the worker.
+      socket.on("error", () => socket.destroy());
       if (req.url?.startsWith(path)) {
         // parse document id and close connection if not present in request
         const documentId = url
