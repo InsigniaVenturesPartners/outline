@@ -57,6 +57,12 @@ export default function init(
   server.on(
     "upgrade",
     function (req: IncomingMessage, socket: Duplex, head: Buffer) {
+      // Guard: without a listener, a peer reset during upgrade is an unhandled
+      // error event and kills the worker.
+      socket.on("error", (err: NodeJS.ErrnoException) => {
+        Logger.warn("Upgrade socket error", { code: err.code, url: req.url });
+        socket.destroy();
+      });
       if (req.url?.startsWith(path) && ioHandleUpgrade) {
         ioHandleUpgrade(req, socket, head);
         return;
